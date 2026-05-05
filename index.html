@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUB iNFO SUS Marília</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #07080e;
+    --bg2:       #0b0d18;
+    --bg3:       #0e1120;
+    --border:    #141b2d;
+    --border2:   #1b2640;
+    --text:      #ffffff;
+    --muted:     #c8d6ea;
+    --muted2:    #8baecf;
+
+    --red:    #f87171;
+    --sky:    #38bdf8;
+    --amber:  #fbbf24;
+    --violet: #a78bfa;
+    --orange: #fb923c;
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 320px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  /* ── HEADER ── */
+  .hdr {
+    padding: 20px 22px 18px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .hdr::after {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(14,165,233,.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .brand { display: flex; align-items: center; gap: 11px; margin-bottom: 10px; }
+  .brand-icon {
+    width: 40px; height: 40px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; overflow: hidden;
+  }
+  .brand-icon img { width: 40px; height: 40px; object-fit: contain; }
+  .brand-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: #f0f6ff; letter-spacing: -.3px; }
+  .brand-org { font-size: 9.5px; color: var(--muted2); text-transform: uppercase; letter-spacing: 1.6px; font-weight: 400; margin-top: 1px; }
+  .hdr-meta { display: flex; align-items: center; gap: 7px; }
+  .pill {
+    background: rgba(14,165,233,.08); border: 1px solid rgba(14,165,233,.18);
+    color: #38bdf8; font-size: 9.5px; padding: 2px 8px; border-radius: 20px;
+    font-weight: 500; letter-spacing: .4px;
+  }
+  .hdr-sub { font-size: 11px; color: var(--muted); font-weight: 300; margin-top: 2px; }
+
+  /* ── SCROLL AREA ── */
+  .scroll { flex: 1; overflow-y: auto; padding: 14px 0 20px; }
+  .scroll::-webkit-scrollbar { width: 4px; }
+  .scroll::-webkit-scrollbar-track { background: transparent; }
+  .scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+  /* ── SECTOR ── */
+  .sector { margin-bottom: 4px; }
+
+  .sec-toggle {
+    display: flex; align-items: center; gap: 9px;
+    padding: 9px 22px 9px 18px;
+    cursor: pointer;
+    user-select: none;
+    transition: background .15s;
+    border-left: 2px solid transparent;
+  }
+  .sec-toggle:hover { background: rgba(255,255,255,.025); }
+  .sec-toggle.open { border-left-color: var(--accent); }
+
+  .sec-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: var(--accent); }
+  .sec-label { font-family: 'Syne', sans-serif; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); flex: 1; }
+  .sec-badge {
+    font-size: 9px; font-weight: 600; color: var(--muted);
+    background: rgba(255,255,255,.04); border: 1px solid var(--border2);
+    padding: 1px 6px; border-radius: 10px;
+  }
+  .sec-chevron {
+    width: 14px; height: 14px; flex-shrink: 0;
+    transition: transform .25s cubic-bezier(.4,0,.2,1);
+    opacity: .4;
+  }
+  .sec-toggle.open .sec-chevron { transform: rotate(180deg); opacity: .7; }
+
+  /* ── PANELS LIST ── */
+  .panels-list {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height .3s cubic-bezier(.4,0,.2,1);
+  }
+  .panels-list.open { max-height: 600px; }
+
+  .panel-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 22px 8px 36px;
+    cursor: pointer;
+    transition: background .15s;
+    border-radius: 0;
+    position: relative;
+  }
+  .panel-item::before {
+    content: '';
+    position: absolute;
+    left: 26px; top: 0; bottom: 0;
+    width: 1px;
+    background: var(--border2);
+  }
+  .panel-item:hover { background: rgba(255,255,255,.03); }
+  .panel-item.active { background: rgba(255,255,255,.05); }
+  .panel-item.active::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 8px; bottom: 8px;
+    width: 2px;
+    background: var(--accent);
+    border-radius: 2px 0 0 2px;
+  }
+
+  .p-ico { font-size: 14px; flex-shrink: 0; }
+  .p-info { flex: 1; min-width: 0; }
+  .p-title { font-family: 'Syne', sans-serif; font-size: 11.5px; font-weight: 700; color: #cdd9ea; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .p-tag { font-size: 9px; color: var(--muted); font-weight: 400; margin-top: 1px; text-transform: uppercase; letter-spacing: .8px; }
+  .p-arr {
+    width: 20px; height: 20px; border-radius: 6px;
+    border: 1px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; opacity: 0; transition: opacity .15s;
+  }
+  .panel-item:hover .p-arr, .panel-item.active .p-arr { opacity: 1; }
+  .p-arr svg { width: 9px; height: 9px; stroke: var(--muted); }
+
+  /* color themes */
+  .c-red  { --accent: var(--red); }
+  .c-sky  { --accent: var(--sky); }
+  .c-amber{ --accent: var(--amber); }
+  .c-violet{ --accent: var(--violet); }
+  .c-orange{ --accent: var(--orange); }
+
+  /* ── FOOTER ── */
+  .ftr {
+    padding: 11px 22px;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .ftr-l { font-size: 9.5px; color: var(--muted2); }
+  .ftr-btn {
+    background: none; border: 1px solid var(--border2); color: var(--muted);
+    font-size: 9.5px; padding: 4px 10px; border-radius: 6px;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .18s;
+  }
+  .ftr-btn:hover { background: var(--bg3); color: #5a88b0; border-color: #253d5f; }
+
+  /* ── VIEWER ── */
+  .viewer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .viewer-bar {
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+    background: var(--bg2);
+    flex-shrink: 0;
+  }
+  .viewer-ico { font-size: 18px; }
+  .viewer-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: #e2ecf8; flex: 1; }
+  .viewer-tag {
+    font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+    padding: 3px 8px; border-radius: 5px;
+  }
+  .viewer-ext {
+    background: none; border: 1px solid var(--border2); color: var(--muted);
+    font-size: 10px; padding: 4px 10px; border-radius: 6px;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .18s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .viewer-ext:hover { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+  .viewer-ext svg { width: 10px; height: 10px; stroke: currentColor; }
+
+  .viewer-frame {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .viewer-frame iframe {
+    width: 100%; height: 100%;
+    border: none;
+    background: #fff;
+  }
+
+  /* Empty state */
+  .empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 40px;
+  }
+  .empty-glyph {
+    width: 72px; height: 72px; border-radius: 18px;
+    background: rgba(14,165,233,.06);
+    border: 1px solid rgba(14,165,233,.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+  }
+  .empty-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: #c8d6ea; text-align: center; }
+  .empty-sub { font-size: 12px; color: var(--muted); text-align: center; line-height: 1.6; max-width: 300px; }
+  .empty-grid {
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 8px;
+  }
+  .empty-chip {
+    background: var(--bg3); border: 1px solid var(--border2);
+    font-size: 10px; padding: 4px 10px; border-radius: 20px;
+    color: var(--muted); font-weight: 500;
+  }
+
+  /* placeholder (when link not set) */
+  .placeholder {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 40px;
+    background: var(--bg);
+  }
+  .ph-icon { font-size: 40px; }
+  .ph-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: #c8d6ea; }
+  .ph-sub { font-size: 11.5px; color: var(--muted); text-align: center; max-width: 280px; line-height: 1.6; }
+  .ph-note {
+    background: var(--bg3); border: 1px dashed var(--border2);
+    border-radius: 8px; padding: 10px 16px;
+    font-size: 10.5px; color: var(--muted); line-height: 1.5;
+    display: flex; gap: 8px; align-items: flex-start; max-width: 320px;
+  }
+  .ph-note svg { width: 14px; height: 14px; stroke: var(--muted2); flex-shrink: 0; margin-top: 1px; }
+
+  .ph-open-btn {
+    margin-top: 6px;
+    display: inline-flex; align-items: center; gap: 7px;
+    background: linear-gradient(135deg, #0369a1, #0ea5e9);
+    color: #fff; border: none; border-radius: 9px;
+    padding: 10px 22px; font-size: 12px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer; transition: opacity .18s, transform .12s;
+    letter-spacing: .2px;
+  }
+  .ph-open-btn:hover { opacity: .88; transform: translateY(-1px); }
+  .ph-open-btn:active { transform: translateY(0); }
+
+  /* Lock badge on restricted panels */
+  .p-lock {
+    width: 16px; height: 16px; border-radius: 4px;
+    background: rgba(251,191,36,.08); border: 1px solid rgba(251,191,36,.25);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 9px;
+  }
+
+  /* Access request banner */
+  .access-banner {
+    display: none;
+    align-items: center; gap: 10px;
+    padding: 8px 24px;
+    background: rgba(251,191,36,.06);
+    border-bottom: 1px solid rgba(251,191,36,.18);
+    font-size: 10.5px; color: #fde68a;
+    flex-shrink: 0;
+  }
+  .access-banner.show { display: flex; }
+  .access-banner svg { flex-shrink: 0; }
+  .access-banner-txt { flex: 1; line-height: 1.5; }
+  .access-banner-txt strong { color: #fbbf24; }
+  .access-banner-link {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(251,191,36,.12); border: 1px solid rgba(251,191,36,.3);
+    color: #fbbf24; font-size: 10px; font-weight: 600;
+    padding: 4px 10px; border-radius: 6px; text-decoration: none;
+    transition: background .18s; white-space: nowrap;
+  }
+  .access-banner-link:hover { background: rgba(251,191,36,.22); }
+  .access-banner-link svg { width: 9px; height: 9px; stroke: #fbbf24; }
+
+  .access-banner-auth {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+    color: #e2ecf8; font-size: 10px; font-weight: 600;
+    padding: 4px 10px; border-radius: 6px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: background .18s; white-space: nowrap;
+  }
+  .access-banner-auth:hover { background: rgba(255,255,255,.12); }
+
+  /* 1Doc access button in placeholder */
+  .ph-access-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.3);
+    color: #fbbf24; border-radius: 9px;
+    padding: 10px 22px; font-size: 12px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer; transition: background .18s, transform .12s;
+    letter-spacing: .2px; text-decoration: none;
+  }
+  .ph-access-btn:hover { background: rgba(251,191,36,.2); transform: translateY(-1px); }
+  .ph-access-btn:active { transform: translateY(0); }
+
+  /* 1Doc footer link */
+  .ftr-1doc {
+    display: inline-flex; align-items: center; gap: 5px;
+    color: var(--muted2); font-size: 9.5px; text-decoration: none;
+    transition: color .18s;
+  }
+  .ftr-1doc:hover { color: #fbbf24; }
+
+  /* Loading overlay */
+  .loading-overlay {
+    position: absolute; inset: 0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 12px;
+    z-index: 10;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s;
+  }
+  .loading-overlay.show { opacity: 1; pointer-events: auto; }
+  .spinner {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 2px solid var(--border2);
+    border-top-color: var(--sky);
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-txt { font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+
+    <div class="hdr" style="display:flex; flex-direction:column; align-items:center; text-align:center;">
+      <div class="brand" style="flex-direction:column; align-items:center; gap:8px;">
+        <img src="logo.png" alt="iNFO SUS Marília" style="height:48px; width:auto; object-fit:contain;">
+        <div class="brand-name" style="font-size:13px; letter-spacing:-.2px;">iNFO SUS Marília</div>
+      </div>
+      <div class="hdr-meta" style="justify-content:center; margin-top:10px;">
+        <span class="pill">Power BI HUB</span>
+      </div>
+      <div class="hdr-sub">Central de dashboards e indicadores</div>
+    </div>
+
+    <div class="scroll" id="menuScroll">
+
+      <!-- VIGILÂNCIA EPIDEMIOLÓGICA -->
+      <div class="sector c-red">
+        <div class="sec-toggle" onclick="toggleSector(this)">
+          <span class="sec-dot"></span>
+          <span class="sec-label">Vigilância Epidemiológica</span>
+          <span class="sec-badge">3</span>
+          <svg class="sec-chevron" viewBox="0 0 14 14" fill="none" stroke="#3a506b" stroke-width="1.4" stroke-linecap="round"><path d="M2 5l5 5 5-5"/></svg>
+        </div>
+        <div class="panels-list">
+          <div class="panel-item" onclick="openPanel(this)" data-href="https://app.powerbi.com/view?r=eyJrIjoiNDcyNWI1M2UtNDhlNC00NGM4LWFjNDEtN2JlNDZjYjU5ODlmIiwidCI6Ijc3MmUzOTBjLTc2OTYtNDI4Zi1hOGZlLTA0ZDZiNmZmYTkyNyJ9" data-title="Dengue" data-ico="🦟" data-tag="Arboviroses" data-desc="Casos notificados, evolução semanal e distribuição geográfica.">
+            <span class="p-ico">🦟</span>
+            <div class="p-info">
+              <div class="p-title">Dengue</div>
+              <div class="p-tag">Arboviroses</div>
+            </div>
+            <span class="p-arr"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 7.5L7.5 1.5M7.5 1.5H3.5M7.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div class="panel-item" onclick="openPanel(this)" data-href="https://app.powerbi.com/view?r=eyJrIjoiNTAxZTViMDAtY2JmNy00OGI4LTllMzYtOWJkYmQwZDEyNWQyIiwidCI6Ijc3MmUzOTBjLTc2OTYtNDI4Zi1hOGZlLTA0ZDZiNmZmYTkyNyJ9" data-title="Violência" data-ico="🚨" data-tag="Notificação" data-desc="Notificações de violência por tipo, faixa etária e territorialização.">
+            <span class="p-ico">🚨</span>
+            <div class="p-info">
+              <div class="p-title">Violência</div>
+              <div class="p-tag">Notificação</div>
+            </div>
+            <span class="p-arr"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 7.5L7.5 1.5M7.5 1.5H3.5M7.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div class="panel-item" onclick="openPanel(this)" data-href="https://app.powerbi.com/reportEmbed?reportId=e85d7b5d-8c1b-49a5-90a3-035781ed2f5b&autoAuth=true&ctid=772e390c-7696-428f-a8fe-04d6b6ffa927" data-title="Suicídio" data-ico="🫂" data-tag="Saúde Mental" data-desc="Tentativas e óbitos por suicídio, perfil e tendência temporal.">
+            <span class="p-ico">🫂</span>
+            <div class="p-info">
+              <div class="p-title">Suicídio</div>
+              <div class="p-tag">Saúde Mental</div>
+            </div>
+            <span class="p-arr"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 7.5L7.5 1.5M7.5 1.5H3.5M7.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ATENÇÃO PRIMÁRIA -->
+      <div class="sector c-sky">
+        <div class="sec-toggle" onclick="toggleSector(this)">
+          <span class="sec-dot"></span>
+          <span class="sec-label">Atenção Primária à Saúde</span>
+          <span class="sec-badge">7</span>
+          <svg class="sec-chevron" viewBox="0 0 14 14" fill="none" stroke="#3a506b" stroke-width="1.4" stroke-linecap="round"><path d="M2 5l5 5 5-5"/></svg>
+        </div>
+        <div class="panels-list">
+          <div class="panel-item" onclick="openPanel(this)" data-href="https://app.powerbi.com/view?r=eyJrIjoiMmI5ZmM0NmMtYmQ3OS00M2UwLTlkNWUtNDhiNGRlN2IwMzU3IiwidCI6Ijc3MmUzOTBjLTc2OTYtNDI4Zi1hOGZlLTA0ZDZiNmZmYTkyNyJ9" data-title="Vacinas — Marília" data-ico="💉" data-tag="Imunização" data-desc="Cobertura vacinal por imunobiológico, faixa etária e UBS.">
+            <span class="p-ico">💉</span>
+            <div class="p-info"><div class="p-title">Vacinas — Marília</div><div class="p-tag">Imunização</div></div>
+            <span class="p-arr"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 7.5L7.5 1.5M7.5 1.5H3.5M7.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div class="panel-item" onclick="openPanel(this)" data-href="https://app.powerbi.com/view?r=eyJrIjoiMDM1NTQyOTQtYjc3Zi00NDQ0LWJmZTAtNDJkZTg0NTFlNzQ0IiwidCI6Ijc3MmUzOTBjLTc2OTYtNDI4Zi1hOGZlLTA0ZDZiNmZmYTkyNyJ9" data-title="Hiperdia" data-ico="❤️" data-tag="Crônicas" data-desc="Controle de hipertensos e diabéticos cadastrados na rede básica.">
+            <span class="p-ico">❤️</span>
+            <div class="p-info"><div class="p-title">Hiperdia</div><div class="p-tag">Doênças Crônicas</div></div>
+            <span class="p-arr"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 7.5L7.5 1.5M7.5 1.5H3.5M7.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div class="panel-item" onclick="openPanel(this)" data-href="https://app.powerbi.com/view?r=eyJrIjoiN2I2M2M5NDYtMzM3YS00YmM4LWJiMmItM2I3MGYzMWQzNTc0IiwidCI6Ijc3MmUzOTBjLTc2OTYtNDI4Zi1hOGZlLTA0ZDZiNmZmYTkyNyJ9" data-title="Atendimentos" data-ico="🏥" data-tag="Produção" data-desc="Volume de atendimentos por unidade, profissional e período.">
+            <span class="p-ico">🏥</span>
+            <div class="p-info"><div class="p-title">Atendimentos</div><div class="p-tag">Produção da APS</div></div>
+            <span class="p-arr"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 7.5L7.5 1.5M7.5 1.5H3.5M7.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div class="panel-item" onclick="openPanel(this)" data-href="https://app.powerbi.com/view?r=eyJrIjoiODdjMDBhYzUtZGFjOS00MWM5LThlMmEtNGRlNGVjOGQ5MTY0IiwidCI6Ijc3MmUzOTBjLTc2OTYtNDI4Zi1hOGZlLTA0ZDZiNmZmYTkyNyJ9" data-title="Cadastros ACS" data-ico="📋" data-tag="ACS" data-desc="Cobertura dos agentes comunitários de saúde.">
+            <span class="p-ico">📋</span>
+            <div class="p-info"><div class="p-title">Cadastros ACS</div><div class="p-tag">ACS</div></div>
+            <span class="p-arr"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 7.5L7.5 1.5M7.5 1.5H3.5M7.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div class="panel-item" onclick="openPanel(this)" data-href="https://app.powerbi.com/view?r=eyJrIjoiYzZkNGJiOGEtOWMwNC00ZGQwLWJiMjgtYTliYjc3MzMxYmUzIiwidCI6Ijc3MmUzOTBjLTc2OTYtNDI4Zi1hOGZlLTA0ZDZiNmZmYTkyNyJ9" data-title="Exame Coletas" data-ico="🔬" data-tag="Laboratório" data-desc="Coletas laboratoriais realizadas, produção por UBS e tipo de exame.">
+            <span class="p-ico">🔬</span>
+            <div class="p-info"><div class="p-title">Exame Coletas</div><div class="p-tag">Laboratório</div></div>
+            <span class="p-arr"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 7.5L7.5 1.5M7.5 1.5H3.5M7.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div class="panel-item" onclick="openPanel(this)" data-href="https://app.powerbi.com/view?r=eyJrIjoiMGE5OTQ3OTgtNDdmZC00ZTU2LWI2YzctMzkwMWM1NTU5ZWRjIiwidCI6Ijc3MmUzOTBjLTc2OTYtNDI4Zi1hOGZlLTA0ZDZiNmZmYTkyNyJ9" data-title="Componentes Qualidade" data-ico="📊" data-tag="Componentes" data-desc="Indicadores do Componente Qualidade — Cofinanciamento Federal.">
+            <span class="p-ico">📊</span>
+            <div class="p-info"><div class="p-title">Componentes de Qualidade</div><div class="p-tag">Cofinanciamento</div></div>
+            <span class="p-arr"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 7.5L7.5 1.5M7.5 1.5H3.5M7.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div class="panel-item" onclick="openPanel(this)" data-href="https://app.powerbi.com/reportEmbed?reportId=f5c49007-8465-470c-9cfe-983c826d394b&autoAuth=true&ctid=772e390c-7696-428f-a8fe-04d6b6ffa927" data-title="Acompanhamento Condicionalidades (Cofinanciamento)" data-ico="📌" data-tag="Cofinanciamento" data-desc="Acompanhamento das condicionalidades de cofinanciamento federal na Atenção Primária.">
+            <span class="p-ico">📌</span>
+            <div class="p-info"><div class="p-title">Acomp. Condicionalidades (Cofinanciamento)</div><div class="p-tag">Cofinanciamento</div></div>
+            <span class="p-arr"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 7.5L7.5 1.5M7.5 1.5H3.5M7.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPRAS -->
+      <div class="sector c-amber">
+        <div class="sec-toggle" onclick="toggleSector(this)">
+          <span class="sec-dot"></span>
+          <span class="sec-label">Setor de Compras</span>
+          <span class="sec-badge">2</span>
+          <svg class="sec-chevron" viewBox="0 0 14 14" fill="none" stroke="#3a506b" stroke-width="1.4" stroke-linecap="round"><path d="M2 5l5 5 5-5"/></svg>
+        </div>
+        <div class="panels-list">
+          <div class="panel-item" onclick="openPanel(this)" data-href="https://app.powerbi.com/view?r=eyJrIjoiZTRiOTQ1ZDEtYTFhYi00NGRmLThkNjMtOWM0ODVkYjQ5MmQxIiwidCI6Ijc3MmUzOTBjLTc2OTYtNDI4Zi1hOGZlLTA0ZDZiNmZmYTkyNyJ9" data-title="Compras" data-ico="📦" data-tag="Gestão" data-desc="Aquisições, contratos e execução orçamentária da secretaria.">
+            <span class="p-ico">📦</span>
+            <div class="p-info"><div class="p-title">Compras</div><div class="p-tag">Gestão</div></div>
+            <span class="p-arr"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 7.5L7.5 1.5M7.5 1.5H3.5M7.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <div class="panel-item" onclick="openPanel(this)" data-href="https://app.powerbi.com/view?r=eyJrIjoiOTY0ZjNjMTctMTZmNS00MjA3LWE1OTAtYTY0NTIxNjNlOWIxIiwidCI6Ijc3MmUzOTBjLTc2OTYtNDI4Zi1hOGZlLTA0ZDZiNmZmYTkyNyJ9" data-title="Compras — Atas" data-ico="📄" data-tag="Contratos" data-desc="Controle de atas de registro de preço vigentes e vencimentos.">
+            <span class="p-ico">📄</span>
+            <div class="p-info"><div class="p-title">Compras — Atas</div><div class="p-tag">Contratos</div></div>
+            <span class="p-arr"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 7.5L7.5 1.5M7.5 1.5H3.5M7.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- NIDI -->
+      <div class="sector c-violet">
+        <div class="sec-toggle" onclick="toggleSector(this)">
+          <span class="sec-dot"></span>
+          <span class="sec-label">Núcleo de Integração de Dados e Informações</span>
+          <span class="sec-badge">1</span>
+          <svg class="sec-chevron" viewBox="0 0 14 14" fill="none" stroke="#3a506b" stroke-width="1.4" stroke-linecap="round"><path d="M2 5l5 5 5-5"/></svg>
+        </div>
+        <div class="panels-list">
+          <div class="panel-item" onclick="openPanel(this)" data-href="https://app.powerbi.com/reportEmbed?reportId=792373ee-7cf4-40b1-94ed-53187a9c8870&autoAuth=true&ctid=772e390c-7696-428f-a8fe-04d6b6ffa927" data-title="Ouvidoria SUS" data-ico="📣" data-tag="Ouvidoria" data-desc="Demandas recebidas, tipos de manifestação, resolutividade e prazos.">
+            <span class="p-ico">📣</span>
+            <div class="p-info"><div class="p-title">Ouvidoria SUS</div><div class="p-tag">Ouvidoria</div></div>
+            <span class="p-arr"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 7.5L7.5 1.5M7.5 1.5H3.5M7.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- NÚCLEO DE REGULAÇÃO AMBULATORIAL -->
+      <div class="sector c-orange">
+        <div class="sec-toggle" onclick="toggleSector(this)">
+          <span class="sec-dot"></span>
+          <span class="sec-label">Núcleo de Regulação Ambulatorial</span>
+          <span class="sec-badge">1</span>
+          <svg class="sec-chevron" viewBox="0 0 14 14" fill="none" stroke="#3a506b" stroke-width="1.4" stroke-linecap="round"><path d="M2 5l5 5 5-5"/></svg>
+        </div>
+        <div class="panels-list">
+          <div class="panel-item" onclick="openPanel(this)" data-href="https://app.powerbi.com/reportEmbed?reportId=40e6a0ba-a19e-431b-ab4f-e7ac97c1fa32&autoAuth=true&ctid=772e390c-7696-428f-a8fe-04d6b6ffa927" data-title="Regulação Ambulatorial" data-ico="🗂️" data-tag="Regulação" data-desc="Painel de acompanhamento da regulação ambulatorial e encaminhamentos.">
+            <span class="p-ico">🗂️</span>
+            <div class="p-info"><div class="p-title">Encaminhamentos e-SUS</div><div class="p-tag">Regulação</div></div>
+            <span class="p-arr"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 7.5L7.5 1.5M7.5 1.5H3.5M7.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /scroll -->
+
+    <div class="ftr">
+      <span class="ftr-l">iNFO SUS Marília · 2026</span>
+      <a href="https://marilia.1doc.com.br/" target="_blank" class="ftr-1doc">
+        <svg viewBox="0 0 10 10" fill="none" width="9" height="9" stroke="#8baecf" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 8.5L8.5 1.5M8.5 1.5H4.5M8.5 1.5V5.5"/></svg>
+        1Doc Marília
+      </a>
+    </div>
+
+  </aside>
+
+  <!-- ── VIEWER ── -->
+  <main class="viewer" id="viewer">
+
+    <!-- Empty state (default) -->
+    <div class="empty" id="emptyState">
+      <div class="empty-glyph">📊</div>
+      <div class="empty-title">Selecione um painel</div>
+      <div class="empty-sub">Expanda um setor no menu lateral e clique em um painel para visualizá-lo aqui.</div>
+      <div class="empty-grid">
+        <span class="empty-chip">Vigilância Epidemiológica</span>
+        <span class="empty-chip">Atenção Primária</span>
+        <span class="empty-chip">Compras</span>
+        <span class="empty-chip">NIDI</span>
+        <span class="empty-chip">Regulação Ambulatorial</span>
+      </div>
+    </div>
+
+    <!-- Active viewer (hidden initially) -->
+    <div id="activeViewer" style="display:none; flex-direction:column; flex:1; height:100%;">
+      <div class="viewer-bar">
+        <span class="viewer-ico" id="viewerIco"></span>
+        <span class="viewer-title" id="viewerTitle"></span>
+        <span class="viewer-tag" id="viewerTag"></span>
+        <button class="viewer-ext" id="viewerExt" onclick="openExternal()">
+          <svg viewBox="0 0 10 10" fill="none"><path d="M1.5 8.5L8.5 1.5M8.5 1.5H4.5M8.5 1.5V5.5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Abrir externo
+        </button>
+      </div>
+      <!-- Access restriction banner -->
+      <div class="access-banner" id="accessBanner">
+        <svg viewBox="0 0 16 16" fill="none" width="15" height="15" stroke="#fbbf24" stroke-width="1.3" stroke-linecap="round">
+          <rect x="3" y="7" width="10" height="7" rx="1.5"/>
+          <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/>
+        </svg>
+        <span class="access-banner-txt">
+          <strong>Painel restrito:</strong> requer login via Microsoft Fabric. Se o acesso estiver bloqueado, solicite ao <strong>SS-GIRI-NIDI</strong>.
+        </span>
+        <a href="https://marilia.1doc.com.br/" target="_blank" class="access-banner-link">
+          <svg viewBox="0 0 10 10" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3"><path d="M1.5 8.5L8.5 1.5M8.5 1.5H4.5M8.5 1.5V5.5"/></svg>
+          Solicitar via 1Doc
+        </a>
+        <button class="access-banner-auth" onclick="confirmAuth()">
+          <svg viewBox="0 0 16 16" fill="none" width="11" height="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+            <rect x="3" y="7" width="10" height="7" rx="1.5"/>
+            <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/>
+            <path d="M6 10.5l1.5 1.5L10 9" stroke-width="1.3"/>
+          </svg>
+          Já tenho autorização
+        </button>
+      </div>
+
+      <div class="viewer-frame" id="viewerFrame">
+        <div class="loading-overlay" id="loadingOverlay">
+          <div class="spinner"></div>
+          <div class="loading-txt">Carregando painel…</div>
+        </div>
+        <!-- iframe or placeholder rendered here -->
+        <div id="frameContent" style="flex:1;height:100%;display:flex;flex-direction:column;"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  let currentHref = null;
+
+  // Mark restricted panels (autoAuth=true) with a lock badge on load
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.panel-item').forEach(item => {
+      const href = item.dataset.href || '';
+      if (href.includes('autoAuth=true')) {
+        item.dataset.restricted = 'true';
+        // Insert lock badge before the arrow
+        const arr = item.querySelector('.p-arr');
+        if (arr) {
+          const lock = document.createElement('span');
+          lock.className = 'p-lock';
+          lock.title = 'Painel restrito — requer login via Fabric';
+          lock.innerHTML = '🔒';
+          item.insertBefore(lock, arr);
+        }
+      }
+    });
+  });
+
+  function toggleSector(toggle) {
+    const list = toggle.nextElementSibling;
+    const isOpen = list.classList.contains('open');
+    list.classList.toggle('open', !isOpen);
+    toggle.classList.toggle('open', !isOpen);
+  }
+
+  function openPanel(item) {
+    // deactivate all
+    document.querySelectorAll('.panel-item').forEach(p => p.classList.remove('active'));
+    item.classList.add('active');
+
+    const href  = item.dataset.href;
+    const title = item.dataset.title;
+    const ico   = item.dataset.ico;
+    const tag   = item.dataset.tag;
+    const desc  = item.dataset.desc;
+    const restricted = item.dataset.restricted === 'true';
+
+    currentHref = href;
+
+    // update bar
+    document.getElementById('viewerIco').textContent   = ico;
+    document.getElementById('viewerTitle').textContent = title;
+    const tagEl = document.getElementById('viewerTag');
+    tagEl.textContent = tag;
+
+    // show/hide access banner
+    const banner = document.getElementById('accessBanner');
+    banner.classList.toggle('show', restricted);
+
+    // show viewer
+    document.getElementById('emptyState').style.display   = 'none';
+    const av = document.getElementById('activeViewer');
+    av.style.display = 'flex';
+
+    // render content
+    renderContent(href, desc, title, ico, restricted);
+  }
+
+  function renderContent(href, desc, title, ico, restricted) {
+    const frame = document.getElementById('frameContent');
+
+    if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
+      document.getElementById('loadingOverlay').classList.add('show');
+      frame.innerHTML = `
+        <iframe src="${href}" id="mainIframe"
+          style="width:100%;height:100%;border:none;background:#fff;"
+          allowfullscreen
+          onload="hideLoader()"
+          onerror="showFallback('${href}','${title}','${ico}','${desc}',${!!restricted})">
+        </iframe>`;
+    } else {
+      showPlaceholder(title, ico, desc);
+    }
+  }
+
+  function showFallback(href, title, ico, desc, restricted) {
+    hideLoader();
+    const accessBlock = restricted ? `
+      <div class="ph-note" style="border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.05);color:#fde68a;max-width:360px;">
+        <svg viewBox="0 0 16 16" fill="none" width="15" height="15" stroke="#fbbf24" stroke-width="1.3" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>
+        <span>Este painel requer login via <strong style="color:#fbbf24">Microsoft Fabric</strong>. Se o acesso estiver bloqueado, solicite ao <strong style="color:#fbbf24">SS-GIRI-NIDI</strong> através do 1Doc.</span>
+      </div>
+      <a href="https://marilia.1doc.com.br/" target="_blank" class="ph-access-btn">
+        <svg viewBox="0 0 14 14" fill="none" style="width:13px;height:13px;stroke:currentColor;stroke-width:1.4;stroke-linecap:round"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H6.5M11.5 2.5V7.5"/></svg>
+        Solicitar acesso via 1Doc
+      </a>` : '';
+
+    document.getElementById('frameContent').innerHTML = `
+      <div class="placeholder">
+        <div class="ph-icon">${ico}</div>
+        <div class="ph-title">${title}</div>
+        <div class="ph-sub">${desc}</div>
+        <div class="ph-note">
+          <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke-width="1.1"/><path d="M7 4.5v3M7 9.5v.5" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <span>Este painel não pode ser exibido aqui. Clique no botão abaixo para abrí-lo diretamente.</span>
+        </div>
+        ${accessBlock}
+        <button class="ph-open-btn" onclick="window.open('${href}', '_blank')">
+          <svg viewBox="0 0 14 14" fill="none" style="width:13px;height:13px;stroke:currentColor;stroke-width:1.4;stroke-linecap:round"><path d="M2.5 11.5L11.5 2.5M11.5 2.5H6.5M11.5 2.5V7.5"/></svg>
+          Abrir painel no Power BI
+        </button>
+      </div>`;
+  }
+
+  function showPlaceholder(title, ico, desc) {
+    document.getElementById('frameContent').innerHTML = `
+      <div class="placeholder">
+        <div class="ph-icon">${ico}</div>
+        <div class="ph-title">${title}</div>
+        <div class="ph-sub">${desc}</div>
+        <div class="ph-note">
+          <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke-width="1.1"/><path d="M7 4.5v3M7 9.5v.5" stroke-width="1.1" stroke-linecap="round"/></svg>
+          <span>Link do Power BI ainda não configurado. Clique em <strong>Configurar links</strong> no rodapé para ativar este painel.</span>
+        </div>
+      </div>`;
+  }
+
+  function confirmAuth() {
+    document.getElementById('accessBanner').classList.remove('show');
+    // Reload the iframe so the now-authenticated session is applied
+    if (currentHref) {
+      renderContent(currentHref, '', document.getElementById('viewerTitle').textContent, document.getElementById('viewerIco').textContent, false);
+    }
+  }
+
+  function hideLoader() {
+    document.getElementById('loadingOverlay').classList.remove('show');
+  }
+
+  function openExternal() {
+    if (currentHref && (currentHref.startsWith('http://') || currentHref.startsWith('https://'))) {
+      window.open(currentHref, '_blank');
+    }
+  }
+
+  function sendPrompt(text) {
+    if (typeof window.sendPrompt === 'function') window.sendPrompt(text);
+  }
+</script>
+
+</body>
+</html>
